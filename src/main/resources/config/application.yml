@@ -8,5 +8,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+  liquibase:
+    enabled: true
+    change-log: classpath:config/liquibase/db.changelog-master.yml
 server:
   port: 8081

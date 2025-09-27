@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0001-create-participantes
+      author: lucas
+      changes:
+        - createTable:
+            tableName: participantes
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: codigo
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: cpf_cnpj
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: nome
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: tipo_pessoa
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: tipo_participante
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: data_hora_cadastro
+                  type: DATETIME(6)
+                  defaultValueComputed: CURRENT_TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: participantes
