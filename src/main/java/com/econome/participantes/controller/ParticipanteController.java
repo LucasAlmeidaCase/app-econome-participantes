@@ -3,6 +3,11 @@ package com.econome.participantes.controller;
 import com.econome.participantes.dto.ParticipanteRequest;
 import com.econome.participantes.dto.ParticipanteResponse;
 import com.econome.participantes.service.ParticipanteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,21 +22,35 @@ import java.util.List;
 @RequestMapping("/api/participantes")
 @Validated
 @RequiredArgsConstructor
+@Tag(name = "Participantes", description = "Operações de CRUD para o recurso Participante")
 public class ParticipanteController {
 
     private final ParticipanteService participanteService;
 
     @GetMapping
+    @Operation(summary = "Listar participantes", description = "Retorna a lista de todos os participantes")
+    @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
     public List<ParticipanteResponse> listar() {
         return participanteService.listarTodos();
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Buscar participante por ID", description = "Retorna o participante correspondente ao ID informado")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Participante encontrado"),
+            @ApiResponse(responseCode = "404", description = "Participante não encontrado", content = @Content)
+    })
     public ParticipanteResponse buscarPorId(@PathVariable Long id) {
         return participanteService.buscarPorId(id);
     }
 
     @PostMapping
+    @Operation(summary = "Criar participante", description = "Cria um novo participante")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Participante criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Conflito de unicidade", content = @Content)
+    })
     public ResponseEntity<ParticipanteResponse> criar(@Valid @RequestBody ParticipanteRequest request) {
         ParticipanteResponse criado = participanteService.criar(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -40,11 +59,23 @@ public class ParticipanteController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualizar participante", description = "Atualiza os dados de um participante existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Participante atualizado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Participante não encontrado", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Conflito de unicidade", content = @Content)
+    })
     public ParticipanteResponse atualizar(@PathVariable Long id, @Valid @RequestBody ParticipanteRequest request) {
         return participanteService.atualizar(id, request);
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Excluir participante", description = "Remove um participante pelo ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Participante excluído com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Participante não encontrado", content = @Content)
+    })
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         participanteService.excluir(id);
         return ResponseEntity.noContent().build();
