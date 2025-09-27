@@ -15,6 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+/**
+ * Implementação do serviço de Participantes.
+ * Aplica regras transacionais, valida unicidade de campos chaves (codigo, cpfCnpj)
+ * e delega o mapeamento entidade/DTO ao MapStruct. Mantém a lógica de negócio
+ * fora da camada de controle e da camada de persistência.
+ */
 @Service
 @RequiredArgsConstructor
 public class ParticipanteServiceImpl implements ParticipanteService {
@@ -22,6 +28,14 @@ public class ParticipanteServiceImpl implements ParticipanteService {
     private final ParticipanteRepository participanteRepository;
     private final ParticipanteMapper participanteMapper;
 
+    /**
+     * Cria um novo participante a partir dos dados informados.
+     * Valida unicidade de código e CPF/CNPJ antes de persistir.
+     *
+     * @param request dados do participante (validados na API)
+     * @return participante criado
+     * @throws com.econome.participantes.exception.ParticipanteDuplicadoException se já existir código/cpfCnpj
+     */
     @Override
     @Transactional
     public ParticipanteResponse criar(ParticipanteRequest request) {
@@ -34,6 +48,16 @@ public class ParticipanteServiceImpl implements ParticipanteService {
         return participanteMapper.toResponse(salvo);
     }
 
+    /**
+     * Atualiza um participante existente.
+     * Valida unicidade de código e CPF/CNPJ (exceto para o próprio registro).
+     *
+     * @param id      identificador do participante
+     * @param request dados atualizados
+     * @return participante atualizado
+     * @throws com.econome.participantes.exception.ParticipanteNaoEncontradoException se não existir
+     * @throws com.econome.participantes.exception.ParticipanteDuplicadoException     se já existir código/cpfCnpj em outro registro
+     */
     @Override
     @Transactional
     public ParticipanteResponse atualizar(Long id, ParticipanteRequest request) {
@@ -48,6 +72,13 @@ public class ParticipanteServiceImpl implements ParticipanteService {
         return participanteMapper.toResponse(atualizado);
     }
 
+    /**
+     * Busca participante por ID.
+     *
+     * @param id identificador
+     * @return participante encontrado
+     * @throws com.econome.participantes.exception.ParticipanteNaoEncontradoException se não existir
+     */
     @Override
     @Transactional(readOnly = true)
     public ParticipanteResponse buscarPorId(Long id) {
@@ -56,12 +87,23 @@ public class ParticipanteServiceImpl implements ParticipanteService {
                 .orElseThrow(() -> new ParticipanteNaoEncontradoException(id));
     }
 
+    /**
+     * Lista todos os participantes cadastrados.
+     *
+     * @return lista de participantes
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ParticipanteResponse> listarTodos() {
         return participanteMapper.toResponseList(participanteRepository.findAll());
     }
 
+    /**
+     * Exclui participante pelo ID.
+     *
+     * @param id identificador
+     * @throws com.econome.participantes.exception.ParticipanteNaoEncontradoException se não existir
+     */
     @Override
     @Transactional
     public void excluir(Long id) {
@@ -71,6 +113,14 @@ public class ParticipanteServiceImpl implements ParticipanteService {
         participanteRepository.deleteById(id);
     }
 
+    /**
+     * Valida unicidade de codigo e cpfCnpj antes de criar/atualizar.
+     *
+     * @param codigo  codigo informado
+     * @param cpfCnpj documento informado
+     * @param idAtual id do registro sendo atualizado (null para criação)
+     * @throws com.econome.participantes.exception.ParticipanteDuplicadoException em caso de conflito
+     */
     private void validarUnicidade(String codigo, String cpfCnpj, Long idAtual) {
         if (codigo != null) {
             participanteRepository.findByCodigo(codigo).ifPresent(existing -> {

@@ -18,6 +18,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+/**
+ * Controller REST responsável por expor endpoints do contexto de "Participantes".
+ * Mantém-se fino delegando regras ao serviço e usando DTOs para clareza de contrato.
+ */
 @RestController
 @RequestMapping("/api/participantes")
 @Validated
@@ -27,6 +31,11 @@ public class ParticipanteController {
 
     private final ParticipanteService participanteService;
 
+    /**
+     * Lista todos os participantes.
+     *
+     * @return lista de participantes
+     */
     @GetMapping
     @Operation(summary = "Listar participantes", description = "Retorna a lista de todos os participantes")
     @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
@@ -34,6 +43,12 @@ public class ParticipanteController {
         return participanteService.listarTodos();
     }
 
+    /**
+     * Busca um participante pelo identificador.
+     *
+     * @param id identificador do participante
+     * @return participante encontrado
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Buscar participante por ID", description = "Retorna o participante correspondente ao ID informado")
     @ApiResponses({
@@ -44,6 +59,12 @@ public class ParticipanteController {
         return participanteService.buscarPorId(id);
     }
 
+    /**
+     * Cria um novo participante.
+     *
+     * @param request dados do participante a ser criado
+     * @return participante criado com Location apontando para o recurso
+     */
     @PostMapping
     @Operation(summary = "Criar participante", description = "Cria um novo participante")
     @ApiResponses({
@@ -58,6 +79,13 @@ public class ParticipanteController {
         return ResponseEntity.created(location).body(criado);
     }
 
+    /**
+     * Atualiza um participante existente.
+     *
+     * @param id      identificador
+     * @param request dados atualizados
+     * @return participante atualizado
+     */
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar participante", description = "Atualiza os dados de um participante existente")
     @ApiResponses({
@@ -70,6 +98,12 @@ public class ParticipanteController {
         return participanteService.atualizar(id, request);
     }
 
+    /**
+     * Exclui um participante.
+     *
+     * @param id identificador do participante
+     * @return 204 se removido
+     */
     @DeleteMapping("/{id}")
     @Operation(summary = "Excluir participante", description = "Remove um participante pelo ID")
     @ApiResponses({

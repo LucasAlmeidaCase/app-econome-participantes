@@ -9,11 +9,15 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
- * Mapper MapStruct para o contexto de Participantes.
+ * Mapper do contexto de Participantes baseado em MapStruct.
+ * Converte entre entidade JPA e DTOs de entrada/saída sem adicionar lógica de negócio.
  */
 @Mapper(componentModel = "spring")
 public interface ParticipanteMapper {
 
+    /**
+     * Cria nova entidade a partir dos dados do request.
+     */
     @Mapping(target = "id", ignore = true)
     Participante toEntity(ParticipanteRequest request);
 
@@ -24,8 +28,14 @@ public interface ParticipanteMapper {
     @Mapping(target = "dataHoraCadastro", ignore = true)
     void updateEntityFromRequest(ParticipanteRequest request, @MappingTarget Participante entity);
 
+    /**
+     * Converte entidade em DTO de resposta.
+     */
     ParticipanteResponse toResponse(Participante entity);
 
+    /**
+     * Converte lista de entidades em lista de DTOs.
+     */
     List<ParticipanteResponse> toResponseList(List<Participante> entities);
 
     /**
