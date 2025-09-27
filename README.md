@@ -2,6 +2,8 @@
 
 API REST em Java 21 com Spring Boot para gerenciamento de **Participantes** (clientes, fornecedores, colaboradores, etc.). Oferece operações CRUD completas com validação, mapeamento DTO ↔ entidade via MapStruct, migrações de banco com Liquibase, documentação OpenAPI/Swagger UI e tratamento centralizado de erros.
 
+> Atualização: CORS parametrizado (`app.cors.allowed-origins`) inclui por padrão `http://localhost:5173` e `http://localhost:8085` para suporte ao front containerizado. Tabela do front exibe ID interno apenas via tooltip no campo código (coluna ID oculta por design).
+
 ---
 
 ## 🧰 Tecnologias Utilizadas
