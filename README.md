@@ -3,6 +3,8 @@
 API REST em Java 21 com Spring Boot para gerenciamento de **Participantes** (clientes, fornecedores, colaboradores, etc.). Oferece operações CRUD completas com validação, mapeamento DTO ↔ entidade via MapStruct, migrações de banco com Liquibase, documentação OpenAPI/Swagger UI e tratamento centralizado de erros.
 
 > Atualização: CORS parametrizado (`app.cors.allowed-origins`) inclui por padrão `http://localhost:5173` e `http://localhost:8085` para suporte ao front containerizado. Tabela do front exibe ID interno apenas via tooltip no campo código (coluna ID oculta por design).
+>
+> Novo: endpoint de busca leve (autocomplete) consumido pelo front de Pedidos e enriquecimento indireto via serviço de Pedidos que agrega o objeto `participante` ao payload de Pedido.
 
 ---
 
@@ -165,6 +167,7 @@ Base URL: `/api/participantes`
 | POST | /api/participantes | Criar participante | 201 (Location header) |
 | PUT | /api/participantes/{id} | Atualizar participante | 200 |
 | DELETE | /api/participantes/{id} | Remover participante | 204 |
+| GET | /api/participantes?search=abc | Busca por código ou nome (para autocomplete) | 200 |
 
 ---
 
@@ -286,6 +289,16 @@ docker build -t econome/participantes:latest .
 ---
 
 > Parte do ecossistema **EconoMe** (Pedidos, Transações, Participantes e Front-end React).
+
+### Integração com Pedidos (Enriquecimento)
+
+O microserviço de Pedidos utiliza o `participanteId` armazenado no Pedido para consultar este serviço e devolver um objeto resumido `participante` embutido. Motivações:
+
+1. Reduz múltiplas chamadas por linha na listagem do front (evita N+1)
+2. Simplifica rendering imediato após POST/PUT
+3. Mantém fallback (`participanteId`) se enrich falhar
+
+Futuras otimizações: endpoint batch (`/api/participantes/bulk?ids=1,2,3`) para reduzir latência agregada.
 
 ---
 
