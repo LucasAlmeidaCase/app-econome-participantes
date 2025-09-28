@@ -98,6 +98,19 @@ public class ParticipanteServiceImpl implements ParticipanteService {
         return participanteMapper.toResponseList(participanteRepository.findAll());
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ParticipanteResponse> pesquisar(String termo) {
+        if (termo == null || termo.isBlank()) {
+            return participanteMapper.toResponseList(participanteRepository.findAll().stream().limit(20).toList());
+        }
+        String t = termo.trim();
+        return participanteMapper.toResponseList(
+                participanteRepository
+                        .findTop20ByCodigoContainingIgnoreCaseOrNomeContainingIgnoreCaseOrCpfCnpjContainingIgnoreCase(t, t, t)
+        );
+    }
+
     /**
      * Exclui participante pelo ID.
      *

@@ -4,6 +4,7 @@ import com.econome.domain.Participante;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.List;
 
 /**
  * Repositório Spring Data JPA para a entidade Participante.
@@ -18,4 +19,7 @@ public interface ParticipanteRepository extends JpaRepository<Participante, Long
     boolean existsByCodigo(String codigo);
 
     boolean existsByCpfCnpj(String cpfCnpj);
+
+    List<Participante> findTop20ByCodigoContainingIgnoreCaseOrNomeContainingIgnoreCaseOrCpfCnpjContainingIgnoreCase(
+            String codigo, String nome, String cpfCnpj);
 }
