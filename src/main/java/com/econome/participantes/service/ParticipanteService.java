@@ -47,6 +47,12 @@ public interface ParticipanteService {
     List<ParticipanteResponse> listarTodos();
 
     /**
+     * Pesquisa participantes por termo (matching em codigo, nome ou cpfCnpj - case insensitive).
+     * Limita a 20 resultados.
+     */
+    List<ParticipanteResponse> pesquisar(String termo);
+
+    /**
      * Exclui um participante pelo ID.
      *
      * @param id identificador

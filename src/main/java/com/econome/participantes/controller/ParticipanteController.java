@@ -43,6 +43,13 @@ public class ParticipanteController {
         return participanteService.listarTodos();
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "Pesquisar participantes", description = "Pesquisa por termo (código, nome ou cpfCnpj). Limite 20.")
+    @ApiResponse(responseCode = "200", description = "Lista retornada (possivelmente vazia)")
+    public List<ParticipanteResponse> pesquisar(@RequestParam(name = "term", required = false) String term) {
+        return participanteService.pesquisar(term);
+    }
+
     /**
      * Busca um participante pelo identificador.
      *
